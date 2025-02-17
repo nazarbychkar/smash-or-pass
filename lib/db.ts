@@ -24,3 +24,12 @@ export async function dbGetUser(userId: string | unknown = "") {
 
   return user[0] || null;
 }
+
+export async function dbGetUserByEmail(userEmail: string | unknown = "") {
+  if (!userEmail) throw new Error("User Email is required.");
+
+  const sql = await dbConnect();
+  const user = await sql`SELECT * FROM "user" WHERE email = ${userEmail}`;
+
+  return user[0] || null;
+}

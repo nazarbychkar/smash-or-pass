@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import dbConnect from "./db";
+import dbConnect, { dbGetUserByEmail } from "./db";
 import { createSession, deleteSession } from "./session";
 import { redirect } from "next/navigation";
 
@@ -23,7 +23,12 @@ const SignupFormSchema = z.object({
     .trim(),
 });
 
-type FormState =
+const LoginFormSchema = z.object({
+  email: z.string().email().trim(),
+  password: z.string().trim(),
+});
+
+type RegistrationFormState =
   | {
       errors?: {
         name?: string[];
@@ -34,10 +39,20 @@ type FormState =
     }
   | undefined;
 
+type LoginFormState =
+  | {
+      errors?: {
+        email?: string[];
+        password?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
+
 export default async function singUp(
-  state: FormState,
+  state: RegistrationFormState,
   formData: FormData
-): Promise<FormState | undefined> {
+): Promise<RegistrationFormState | undefined> {
   const validatedFields = SignupFormSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
@@ -71,6 +86,35 @@ export default async function singUp(
 }
 
 export async function logout() {
-  deleteSession()
-  redirect('/login')
+  deleteSession();
+  redirect("/login");
+}
+
+export async function login(
+  state: LoginFormState,
+  formData: FormData
+): Promise<LoginFormState | undefined> {
+  const validatedFields = LoginFormSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+
+  if (!validatedFields.success) {
+    return { errors: validatedFields.error.flatten().fieldErrors };
+  }
+
+  const { email, password } = validatedFields.data;
+  const user = await dbGetUserByEmail(email);
+
+  if (!user || email !== user.email) {
+    return { errors: { email: ["email or password is incorrect."] } };
+  }
+
+  const passwordCheck = await bcrypt.compare(password, user.password);
+  if (!passwordCheck) {
+    return { errors: { email: ["email or password is incorrect."] } };
+  }
+
+  await createSession(user.id);
+  redirect("/profile");
 }
