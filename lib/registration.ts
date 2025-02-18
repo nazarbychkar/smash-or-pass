@@ -87,7 +87,7 @@ export default async function singUp(
 
 export async function logout() {
   deleteSession();
-  redirect("/login");
+  redirect("/");
 }
 
 export async function login(
