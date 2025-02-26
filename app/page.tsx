@@ -11,12 +11,12 @@ export default async function Home() {
       <h1>Smash or Pass</h1>
       {user ? (
         <>
-          <Link href="/profile">Profile</Link>
+          <Link href="/profile">Profile </Link>
           <LogoutButton />
         </>
       ) : (
         <>
-          <Link href="/register">Register</Link>
+          <Link href="/register">Register </Link>
           <Link href="/login">Login</Link>
         </>
       )}

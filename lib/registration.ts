@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import dbConnect, { dbGetUserByEmail } from "./db";
+import dbConnect, { dbCreateUser, dbGetUserByEmail } from "./db";
 import { createSession, deleteSession } from "./session";
 import { redirect } from "next/navigation";
 
@@ -64,17 +64,8 @@ export default async function singUp(
   }
 
   const { name, email, password } = validatedFields.data;
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const sql = await dbConnect();
-
-  const data = await sql`
-    INSERT INTO "user" (name, email, password) 
-    VALUES (${name}, ${email}, ${hashedPassword})
-    RETURNING id
-  `;
-
-  const user = data[0];
+  
+  const user = await dbCreateUser(name, email, password);
 
   if (!user) {
     return { message: "there is some troubles with creating this user." };
