@@ -21,7 +21,7 @@ export const getUser = cache(async () => {
     const user = await dbGetUser(session?.userId);
     return user;
   } catch (error) {
-    console.log("Failed to fetch user");
+    console.log("failed to fetch user");
     return null;
   }
 });

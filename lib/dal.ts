@@ -3,10 +3,10 @@ import "server-only";
 import { cookies } from "next/headers";
 import { cache } from "react";
 import { decrypt } from "./session";
-import { redirect } from "next/navigation";
 
 export const verifySession = cache(async () => {
   const sessionCookie = (await cookies()).get("session")?.value;
+  // console.log("sessionCookie", sessionCookie);
   const session = await decrypt(sessionCookie);
 
   if (!session?.userId) {

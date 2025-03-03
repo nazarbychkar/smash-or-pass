@@ -1,5 +1,8 @@
+"use server"
+
 import { neon } from "@neondatabase/serverless";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
+import { getUser } from "./getUser";
 
 const USERS_DATABASE_NAME = "users";
 const PHOTOS_DATABASE_NAME = "photos";
@@ -80,14 +83,13 @@ export async function dbCreatePhoto(link: string, user_id: number) {
     INSERT INTO "photos" (user_id, imgur_link) 
     VALUES (${user_id}, ${link})
   `;
-
 }
 
-export async function dbGetUser(userId: string | unknown = "") {
-  if (!userId) throw new Error("User ID is required.");
+export async function dbGetUser(user_id: string | unknown = "") {
+  if (!user_id) throw new Error("User ID is required.");
 
   const sql = await dbConnect();
-  const user = await sql`SELECT * FROM "users" WHERE id = ${userId}`;
+  const user = await sql`SELECT * FROM "users" WHERE id = ${user_id}`;
 
   return user[0] || null;
 }
@@ -99,4 +101,12 @@ export async function dbGetUserByEmail(userEmail: string | unknown = "") {
   const user = await sql`SELECT * FROM "users" WHERE email = ${userEmail}`;
 
   return user[0] || null;
+}
+
+export async function dbGetPhotosByUser(user_id: number) {
+  const sql = await dbConnect();
+
+  const photos = await sql`SELECT * FROM "photos" WHERE user_id = ${user_id}`;
+
+  return photos;
 }

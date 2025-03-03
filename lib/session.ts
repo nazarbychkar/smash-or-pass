@@ -15,12 +15,14 @@ export async function encrypt(payload: JWTPayload) {
 
 export async function decrypt(session: string | undefined = "") {
   try {
+    // console.log("session", session);
     const { payload } = await jwtVerify(session, encodedKey, {
       algorithms: ["HS256"],
     });
     return payload;
   } catch (e) {
     console.log("failed to verify session: " + e);
+    return null;
   }
 }
 
@@ -59,6 +61,6 @@ export async function updateSession() {
 }
 
 export async function deleteSession() {
-    const cookieStore = await cookies()
-    cookieStore.delete('session')
-  }
+  const cookieStore = await cookies();
+  cookieStore.delete("session");
+}

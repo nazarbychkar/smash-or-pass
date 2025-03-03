@@ -6,7 +6,7 @@ export default async function Profile() {
   return (
     <main>
       <h1>Hi, {user?.name}!</h1>
-      <PhotoManager />
+      <PhotoManager userId={user?.id} />
     </main>
   );
 }

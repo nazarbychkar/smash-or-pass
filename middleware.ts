@@ -10,17 +10,17 @@ export default async function middleware(req: NextRequest) {
   const isProtectedRoute = protectedRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
 
-  const cookieSession = (await cookies()).get("session")?.value;
-  const session = await decrypt(cookieSession);
+  const cookieSession = req.cookies.get("session")?.value;
+  const session = cookieSession ? await decrypt(cookieSession) : null;
 
   // TODO: i don't understand. when you have session and it is if !session it redirects to /, but it must be staying. ugh my head is messy.
-  if (isProtectedRoute && session?.usedId) {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
+  if (isProtectedRoute && !session?.userId) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
 
-  if (isPublicRoute && !session?.userId) {
+  if (isPublicRoute && session?.userId) {
     return NextResponse.redirect(new URL("/profile", req.url));
   }
 
-  return NextResponse.next()
+  return NextResponse.next();
 }

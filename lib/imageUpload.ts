@@ -1,4 +1,5 @@
 "use server";
+
 import fs from "fs";
 import path from "path";
 import { dbCreatePhoto } from "./db";
@@ -67,6 +68,7 @@ export default async function imageUpload(
       return {errors: {image: ["how do you even uploaded image without user login? must be my code problem"]}}
     }
 
+    // console.log("link", link)
     dbCreatePhoto(link, user.id);
   } catch (error) {
     console.error("Error uploading image:", error);
