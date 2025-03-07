@@ -47,7 +47,7 @@ export default function PhotoManager(props: any) {
                 src={photo.imgur_link}
                 width={250}
                 height={250}
-                alt="Picture of the author"
+                alt="Picture added by user"
               />
             </li>
           ))}

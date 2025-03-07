@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import dbConnect, { dbCreateUser, dbGetUserByEmail } from "./db";
+import dbConnect, { dbCreateUser, dbGetUserByEmail, dbRedisIsRefilmentNeeded } from "./db";
 import { createSession, deleteSession } from "./session";
 import { redirect } from "next/navigation";
 
@@ -73,6 +73,9 @@ export default async function singUp(
 
   await createSession(user.id);
 
+// TODO: maybe find a better spot for redis photo refilment
+  dbRedisIsRefilmentNeeded(user.id);
+  
   redirect("/profile");
 }
 
@@ -107,5 +110,9 @@ export async function login(
   }
 
   await createSession(user.id);
+  
+// TODO: maybe find a better spot for redis photo refilment
+  dbRedisIsRefilmentNeeded(user.id);
+
   redirect("/profile");
 }
