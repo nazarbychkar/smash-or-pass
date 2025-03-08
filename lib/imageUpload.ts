@@ -1,10 +1,7 @@
 "use server";
 
-import fs from "fs";
-import path from "path";
 import { dbCreatePhoto } from "./db";
 import { getUser } from "./getUser";
-const imgur = require("imgur");
 
 type imageFormState =
   | {
@@ -41,7 +38,7 @@ export default async function imageUpload(
     method: "POST",
     headers: myHeaders,
     body: newFormData,
-    redirect: "follow",
+    redirect: "follow" as RequestRedirect,
   };
 
   try {

@@ -2,13 +2,12 @@
 
 import { neon } from "@neondatabase/serverless";
 import bcrypt from "bcryptjs";
-import { getUser } from "./getUser";
-import redis from "redis";
+import { createClient } from "redis";
 
-const USERS_DATABASE_NAME = "users";
-const PHOTOS_DATABASE_NAME = "photos";
+// const USERS_DATABASE_NAME = "users";
+// const PHOTOS_DATABASE_NAME = "photos";
 
-const redisClient = redis.createClient();
+const redisClient = createClient();
 await redisClient.connect();
 
 export default async function dbConnect() {
@@ -57,7 +56,7 @@ export default async function dbConnect() {
   EXECUTE FUNCTION limit_user_photos();
 `;
   } catch (e) {
-    console.log("some bullshit with trigger in postgreSQL");
+    console.log("some bullshit with trigger in postgreSQL:", e);
   }
   return sql;
 }
@@ -169,7 +168,8 @@ export async function dbAddPhotoRating(photoId: number, rating: number) {
 
   console.log("add rate, rating and photo id:", rating, photoId);
 
-  const res = await sql`UPDATE "photos"
+  // const res = 
+  await sql`UPDATE "photos"
   SET rating = rating + ${rating}
   WHERE photo_id = ${photoId}
   RETURNING rating`;

@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import dbConnect, { dbCreateUser, dbGetUserByEmail, dbRedisIsRefilmentNeeded } from "./db";
+import { dbCreateUser, dbGetUserByEmail, dbRedisIsRefilmentNeeded } from "./db";
 import { createSession, deleteSession } from "./session";
 import { redirect } from "next/navigation";
 
