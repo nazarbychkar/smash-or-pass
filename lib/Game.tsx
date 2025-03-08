@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { dbAddPhotoRating, dbRedisGetPhoto } from "@/lib/db";
-
+// TODO: connect Redis on deployment
 // TODO: make that photos of themselves would not be appearing
 interface GameProps {
   userId: number;

@@ -7,7 +7,7 @@ import { createClient } from "redis";
 // const USERS_DATABASE_NAME = "users";
 // const PHOTOS_DATABASE_NAME = "photos";
 
-const redisClient = createClient();
+const redisClient = createClient({ url: process.env.REDIS_URL });
 await redisClient.connect();
 
 export default async function dbConnect() {
@@ -168,7 +168,7 @@ export async function dbAddPhotoRating(photoId: number, rating: number) {
 
   console.log("add rate, rating and photo id:", rating, photoId);
 
-  // const res = 
+  // const res =
   await sql`UPDATE "photos"
   SET rating = rating + ${rating}
   WHERE photo_id = ${photoId}
@@ -179,5 +179,4 @@ export async function dbAddPhotoRating(photoId: number, rating: number) {
   // SET rating = rating + ${rating}
   // WHERE photo_id = ${photoId}
   // RETURNING rating`);
-
 }
