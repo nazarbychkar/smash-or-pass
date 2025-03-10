@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useEffect, useState } from "react";
 import imageUpload from "@/lib/imageUpload";
-import { dbGetPhotosByUser } from "@/lib/db";
+import { dbDeletePhoto, dbGetPhotosByUser } from "@/lib/db";
 import Image from "next/image";
 
 interface PhotoManagerProps {
@@ -75,7 +75,7 @@ export default function PhotoManager(props: PhotoManagerProps) {
           <form action={handleSubmit} className="space-y-4">
             <div className="form-control w-full">
               <label className="label">
-                <span className="label-text">Choose an image</span>
+                <span className="label-text">Choose an image. Only 5 images.</span>
               </label>
               <div className="flex items-center gap-4">
                 <label className="btn btn-outline">
@@ -107,11 +107,11 @@ export default function PhotoManager(props: PhotoManagerProps) {
                 )}
               </div>
             </div>
-
+            <br />
             <button
               type="submit"
               className={`btn btn-primary ${isUploading ? "loading" : ""}`}
-              disabled={isUploading || !fileName}
+              disabled={isUploading || !fileName || photos.length == 5}
             >
               {isUploading ? "Uploading..." : "Upload Photo"}
             </button>
@@ -198,6 +198,9 @@ export default function PhotoManager(props: PhotoManagerProps) {
                     <div className="bottom-0 left-0 w-full bg-black bg-opacity-60 text-white p-2 text-center opacity-0 group-hover:opacity-100 transition-opacity text-xl">
                       Rating: {photo.rating || "oh, we don't know"}
                     </div>
+                    <button className="btn btn-outline btn-sm" onClick={() => dbDeletePhoto(photo.photo_id)}>
+                      Delete photo.
+                    </button>
                   </li>
                 ))}
               </ul>

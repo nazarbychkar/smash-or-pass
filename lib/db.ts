@@ -84,10 +84,21 @@ export async function dbCreateUser(
 export async function dbCreatePhoto(link: string, user_id: number) {
   const sql = await dbConnect();
 
-  await sql`
+  const photo_id = await sql`
     INSERT INTO "photos" (user_id, imgur_link) 
     VALUES (${user_id}, ${link})
+    RETURNING photo_id
   `;
+
+  console.log("dbCreatePhoto", photo_id[0]);
+  dbRedisFillAllUserOnePhoto(photo_id[0].photo_id)
+
+}
+
+export async function dbDeletePhoto(photoId:number) {
+  const sql = await dbConnect();
+
+  await sql`DELETE FROM photos WHERE photo_id = ${photoId}`;
 }
 
 export async function dbGetUser(user_id: string | unknown = "") {
@@ -132,6 +143,19 @@ export async function dbRedisFill(userId: number) {
   const currentDate = new Date();
   currentDate.setDate(currentDate.getDate() + 7);
   await redisClient.expireAt(userIdString, currentDate);
+}
+
+export async function dbRedisFillAllUserOnePhoto(photoId:number) {
+  const sql = await dbConnect();
+  const photoIdString = photoId.toString()
+  
+  const users = await sql`SELECT id FROM users`
+  console.log("dbRedisFillAllUserOnePhoto, users", users)
+
+  for (const user of users) {
+    console.log("dbRedisFillAllUserOnePhoto, user", user)
+    redisClient.lPush(user.id.toString(), photoIdString);
+  }
 }
 
 export async function dbRedisIsRefilmentNeeded(userId: number) {
